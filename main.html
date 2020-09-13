@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
 	<title>Whiteboards+Stickies</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet"> 
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="./js/socket.js"></script>
 </head>
 <body>
 	<div id="app">
@@ -29,7 +28,6 @@
 					<svg height="512pt" viewBox="0 0 512 512" width="512pt" xmlns="http://www.w3.org/2000/svg" class="add" v-on:click="isStickAdd = !isStickAdd"><path d="m256 512c-141.164062 0-256-114.835938-256-256s114.835938-256 256-256 256 114.835938 256 256-114.835938 256-256 256zm0-480c-123.519531 0-224 100.480469-224 224s100.480469 224 224 224 224-100.480469 224-224-100.480469-224-224-224zm0 0"/><path d="m368 272h-224c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h224c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"/><path d="m256 384c-8.832031 0-16-7.167969-16-16v-224c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v224c0 8.832031-7.167969 16-16 16zm0 0"/></svg>
 					<ol class="sticker-width" v-show="isStickAdd">
 						<li v-on:click="pushSticker('small-sticker')">Small</li>
-						<li v-on:click="pushSticker('comments-sticker')">Comment</li>
 						<li v-on:click="pushSticker('large-sticker')">Large</li>
 						<li v-on:click="pushCircleSticker()">Circle(delete dblclick)</li>
 					</ol>
@@ -73,23 +71,6 @@
 					<button class="modal-delete" v-on:click="deleteSticker">Delete</button>
 				</div>
 				
-			</div>
-		</div>
-
-		<div class="comment-modal" v-show="commentModal.isActive" style="z-index: 2;background: red;position: fixed;">
-			<div>
-				<textarea maxlength="250">{{ commentModal.content }}</textarea>
-			</div>
-			<div>
-				<textarea maxlength="250">{{ commentModal.firstComment }}</textarea>
-			</div>
-			<div v-for="(comment, i) in commentModal.comments">
-				<textarea maxlength="250">{{ comment }}</textarea>
-			</div>
-
-			<div class="modal-buttons">
-				<button class="modal-save" v-on:click="saveCommentModalText">Save</button>
-				<button class="modal-delete" v-on:click="deleteSticker">Delete</button>
 			</div>
 		</div>
 	</div>

@@ -1,13 +1,19 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
 	<title>Whiteboards+Stickies</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet"> 
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="./js/ajax.js"></script>
 </head>
 <body>
+    <?php
+		if(!isset($_COOKIE["team"])) {
+            header('Location: ./main');
+        }
+	?>
 	<div id="app">
 		<div class="backgrounds">
 			<div class="back1" v-show="isBackground === 1">
@@ -58,9 +64,8 @@
 				<div class="first-comment">{{ sticker.firstComment }}</div>
 				<div class="other-comments" v-show="sticker.comments.length">+{{ sticker.comments.length }}</div>
 			</div>
-		</div>	
-		<svg width="62" height="67" viewBox="0 0 62 67" class="circle-sticker" v-for="(circleSticker, i) in circleStickers" :style="circleSticker.st"  v-on:mousedown="mousedownSticker($event, i, 'circleStickers')" v-on:dblclick="deleteCircleSticker(i)"><g filter="url(#filter0_f)"><path d="M31 62C45.3594 62 57 50.3594 57 36L31 10C16.6406 10 5 21.6406 5 36C5 50.3594 16.6406 62 31 62Z" fill="black" fill-opacity="0.1"/></g><path d="M31 60C47.5685 60 61 46.5685 61 30L31 0C14.4315 0 1 13.4315 1 30C1 46.5685 14.4315 60 31 60Z"/><path d="M61 30C44.4315 30 31 16.5685 31 0L61 30Z" fill="black" fill-opacity="0.15"/><defs><filter id="filter0_f" x="0" y="5" width="62" height="62" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2.5" result="effect1_foregroundBlur"/></filter></defs></svg>
-		
+		</div>
+
 		<div id="modal" v-show="modal.isActive">
 			<div id="modal-content" :style="{background: modal.st.background, transform: modal.st.transform}">
 				<div id="modal-edit">
@@ -73,7 +78,13 @@
 				
 			</div>
 		</div>
+		<svg width="62" height="67" viewBox="0 0 62 67" class="circle-sticker" v-for="(circleSticker, i) in circleStickers" :style="circleSticker.st"  v-on:mousedown="mousedownSticker($event, i, 'circleStickers')" v-on:dblclick="deleteCircleSticker(i)"><g filter="url(#filter0_f)"><path d="M31 62C45.3594 62 57 50.3594 57 36L31 10C16.6406 10 5 21.6406 5 36C5 50.3594 16.6406 62 31 62Z" fill="black" fill-opacity="0.1"/></g><path d="M31 60C47.5685 60 61 46.5685 61 30L31 0C14.4315 0 1 13.4315 1 30C1 46.5685 14.4315 60 31 60Z"/><path d="M61 30C44.4315 30 31 16.5685 31 0L61 30Z" fill="black" fill-opacity="0.15"/><defs><filter id="filter0_f" x="0" y="5" width="62" height="62" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2.5" result="effect1_foregroundBlur"/></filter></defs></svg>
 	</div>
+	<h2 class="name-team">
+		<?php
+			echo "Login: " . $_COOKIE["login"];
+		?>
+	</h2>
 	<script>
 		function getRandInt(min, max) {
 			return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -101,14 +112,6 @@
 					content: "Edit me.",
 					elemInd: 0,
 					st: {}
-				},
-				commentModal: {
-					isActive: true,
-					content: "Edit me.",
-					elemInd: 0,
-					firstComment: "Edit me.",
-					comments: ["1"],
-					st: {}
 				}
 			},
 			methods: {
@@ -130,21 +133,10 @@
 					messageSend({circleStickers: app.circleStickers, stickers: app.stickers});
 				},
 				showModal: function(i) {
-					
-					if(this.stickers[i].cls === 'comments-sticker') {
-						this.commentModal.isActive = true;
-						this.commentModal.st = this.stickers[i].st;
-						this.commentModal.elemInd = i;
-						this.commentModal.content = this.stickers[i].content;
-						this.commentModal.firstComment = this.stickers[i].firstComment;
-						this.commentModal.comments = this.stickers[i].comments;
-						
-					} else {
-						this.modal.st = this.stickers[i].st;
-						this.modal.elemInd = i;
-						document.getElementById("modal-text").value= this.stickers[i].content;
-						this.modal.isActive = true;
-					}					
+					this.modal.st = this.stickers[i].st;
+					this.modal.elemInd = i;
+					document.getElementById("modal-text").value= this.stickers[i].content;					
+					this.modal.isActive = true;
 				},
 				saveModalText: function() {
 					this.stickers[this.modal.elemInd].content = document.getElementById("modal-text").value;
@@ -154,7 +146,6 @@
 				deleteSticker: function() {
 					this.stickers.splice(this.modal.elemInd, 1);
 					this.modal.isActive = false;
-					this.commentModal.isActive = false;
 					messageSend({circleStickers: app.circleStickers, stickers: app.stickers});
 				},
 				deleteCircleSticker: function(i) {
@@ -202,9 +193,6 @@
 					}
 
 					window.addEventListener("mouseup", removeListener);
-
-				},
-				saveCommentModalText: function() {
 
 				}
 			}

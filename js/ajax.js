@@ -1,5 +1,5 @@
 async function setData(obj) {
-	let response = await fetch('./server.php', {
+	fetch('./server.php', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8'
@@ -20,9 +20,6 @@ async function getData() {
 	let result = await response.json();
 	return result;
 }
-setInterval(function() {
-	changeApp();
-}, 5000);
 
 function changeApp() {
 	getData().then(function(str) {
